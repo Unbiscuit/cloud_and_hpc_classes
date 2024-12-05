@@ -1,10 +1,12 @@
 task 1 
 
-  "docker compose up -d" from task 1 dir
+  "docker compose up -d" from task1 dir
   
   access localhost from your browser
 
 task 2
+
+  "from task2 dir"
 
   minikube start
 
