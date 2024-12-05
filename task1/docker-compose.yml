@@ -1,0 +1,34 @@
+services:
+  backend:
+    image: task1-backend
+    pull_policy: never
+    container_name: task1-backend
+    build:
+      context: ./backend
+      dockerfile: Dockerfile
+      target: runner
+    ports: 
+      - 8000:8000
+    env_file:
+      - ./backend/.env
+
+  frontend:
+    image: task1-frontend
+    pull_policy: never
+    container_name: task1-frontend
+    build:
+      context: ./frontend
+      dockerfile: Dockerfile
+    ports: 
+      - 80:80
+
+  mongodb:
+    image: mongo
+    container_name: task1-mongodb
+    volumes:
+      - mongodb-data:/data/db
+    env_file:
+      - ./mongodb/.env
+
+volumes:
+  mongodb-data:

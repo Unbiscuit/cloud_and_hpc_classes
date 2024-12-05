@@ -1,0 +1,176 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>SHL App</title>
+    <style>
+       
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        
+        body {
+            font-family: 'Arial', sans-serif;
+            background: linear-gradient(135deg, #2c3e50, #4ca1af);
+            color: #f5f5f5;
+            height: 100vh;
+            display: flex;
+            justify-content: center;
+            align-items: flex-start;
+            padding-top: 50px;
+        }
+
+        
+        .container {
+            background: rgba(255, 255, 255, 0.1);
+            backdrop-filter: blur(8px);
+            padding: 20px;
+            border-radius: 10px;
+            box-shadow: 0px 4px 6px rgba(0, 0, 0, 0.2);
+            width: 100%;
+            max-width: 600px;
+            text-align: center;
+        }
+
+       
+        h1 {
+            margin-bottom: 20px;
+            font-size: 2rem;
+            color: #e74c3c;
+        }
+
+       
+        input[type="text"] {
+            padding: 10px;
+            width: calc(100% - 20px);
+            margin-bottom: 20px;
+            border: 2px solid #ecf0f1;
+            border-radius: 5px;
+            font-size: 1rem;
+            background: #f5f5f5;
+            color: #333;
+        }
+
+        input[type="text"]:focus {
+            outline: none;
+            border-color: #4ca1af;
+        }
+
+      
+        button {
+            background: #e74c3c;
+            color: #fff;
+            border: none;
+            border-radius: 5px;
+            padding: 10px 15px;
+            font-size: 1rem;
+            cursor: pointer;
+            transition: background-color 0.3s ease;
+        }
+
+        button:hover {
+            background: #c0392b;
+        }
+
+       
+        ul {
+            list-style: none;
+            margin-top: 20px;
+        }
+
+        li {
+            background: #34495e;
+            margin: 10px 0;
+            padding: 10px;
+            border-radius: 5px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        li span {
+            flex: 1;
+            text-align: left;
+            color: #ecf0f1;
+        }
+
+        .delete-btn {
+            background: #e74c3c;
+            color: #fff;
+            border: none;
+            border-radius: 3px;
+            padding: 5px 10px;
+            cursor: pointer;
+            transition: background-color 0.3s ease;
+        }
+
+        .delete-btn:hover {
+            background: #c0392b;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>Shopping list</h1>
+        <input type="text" id="itemInput" placeholder="Enter a new item..." />
+        <button id="addButton">Add Item</button>
+        <ul id="itemList"></ul>
+    </div>
+
+    <script>
+        const API_URL = 'http://localhost:8000/shl';
+
+        async function loadItems() {
+            const response = await fetch(API_URL);
+            const items = await response.json();
+
+            const itemList = document.getElementById('itemList');
+            itemList.innerHTML = '';
+
+            items.forEach(item => {
+                const li = document.createElement('li');
+
+                const contentSpan = document.createElement('span');
+                contentSpan.textContent = item.content;
+
+                const deleteButton = document.createElement('button');
+                deleteButton.textContent = 'Delete';
+                deleteButton.className = 'delete-btn';
+                deleteButton.onclick = () => deleteItem(item._id);
+
+                li.appendChild(contentSpan);
+                li.appendChild(deleteButton);
+                itemList.appendChild(li);
+            });
+        }
+
+        async function addItem() {
+            const itemInput = document.getElementById('itemInput');
+            const content = itemInput.value.trim();
+
+            if (!content) return;
+
+            await fetch(API_URL, {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ content })
+            });
+
+            itemInput.value = '';
+            loadItems();
+        }
+
+        async function deleteItem(id) {
+            await fetch(`${API_URL}/${id}`, { method: 'DELETE' });
+            loadItems();
+        }
+
+        document.getElementById('addButton').addEventListener('click', addItem);
+        window.onload = loadItems;
+    </script>
+</body>
+</html>
