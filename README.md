@@ -1,4 +1,5 @@
 task 1 
+
   "docker compose up -d" from task 1 dir
   
   access localhost from your browser
